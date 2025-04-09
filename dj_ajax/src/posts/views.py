@@ -6,6 +6,34 @@ from django.shortcuts import get_object_or_404
 from .forms import PostForm # Import the form
 from profiles.models import Profile # Import Profile to find the author
 
+def update_post(request, pk):
+    obj = get_object_or_404(Post, pk=pk)
+    if request.user != obj.author.user: # Basic permission check
+        return JsonResponse({'error': 'Permission denied'}, status=403)
+
+    if request.method == 'POST':
+        new_title = request.POST.get('title')
+        new_body = request.POST.get('body')
+        obj.title = new_title
+        obj.body = new_body
+        obj.save()
+        # Return updated data
+        return JsonResponse({
+            'title': obj.title,
+            'body': obj.body,
+        })
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+def delete_post(request, pk):
+    obj = get_object_or_404(Post, pk=pk)
+    if request.user != obj.author.user: # Basic permission check
+        return JsonResponse({'error': 'Permission denied'}, status=403)
+
+    if request.method == 'POST':
+        obj.delete()
+        return JsonResponse({'msg': 'Post deleted successfully'}) # Return simple success
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
 def post_detail_data_view(request, pk):
     """Returns details of a single post as JSON"""
     obj = get_object_or_404(Post, pk=pk)
@@ -24,6 +52,10 @@ def post_detail(request, pk):
     obj = get_object_or_404(Post, pk=pk) # Get the specific post or 404
     form = PostForm() # Empty form instance initially (for update modal later)
 
+    print(f"--- Checking Photos for Post PK={pk} ('{obj.title}') ---")
+    print(f"Result of obj.get_photos(): {obj.get_photos()}")
+
+    
     context = {
         'obj': obj,   # Pass post object (e.g., for title tag)
         'form': form, # Pass form instance

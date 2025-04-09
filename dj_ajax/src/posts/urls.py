@@ -1,6 +1,6 @@
 from django.urls import path
 # Import the view function we just created
-from .views import post_list_and_create, load_posts_data_view,like_unlike_post,post_detail,post_detail_data_view
+from .views import post_list_and_create, load_posts_data_view,like_unlike_post,post_detail,post_detail_data_view,update_post, delete_post
 
 
 
@@ -18,4 +18,9 @@ urlpatterns = [
     path('<int:pk>/', post_detail, name='post-detail'), # Existing detail HTML page
     # Add path for the JSON data endpoint for a specific post
     path('<int:pk>/data/', post_detail_data_view, name='post-detail-data'),
+
+    # Add URL for updating a specific post
+    path('<int:pk>/update/', update_post, name='post-update'),
+    # Add URL for deleting a specific post
+    path('<int:pk>/delete/', delete_post, name='post-delete'),
 ]

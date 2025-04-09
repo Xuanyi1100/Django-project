@@ -24,5 +24,25 @@ class Post(models.Model):
         # Returns the number of users who liked this post instance
         return self.liked.count()
     
+    def get_photos(self):
+        # Django automatically creates '<lowercase_model_name>_set' for reverse relations
+        # So Photo -> photo_set
+        return self.photo_set.all()
+    
     class Meta:
         ordering = ('-created',) # Note the comma to make it a tuple
+
+    
+
+class Photo(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE) # Link to the Post model
+    image = models.ImageField(upload_to='photos') # Requires Pillow, saves images relative to MEDIA_ROOT/photos/
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        # Example: "Photo (Post: My First Post, ID: 5)"
+        
+        return f"Photo (Post: {self.post.title}, ID: {self.pk})"
+    
+    class Meta:
+        ordering = ('-created',)

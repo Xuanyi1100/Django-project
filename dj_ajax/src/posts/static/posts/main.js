@@ -50,6 +50,13 @@ const handleAlerts = (type, msg) => {
     }
 };
 
+// Check localStorage for a deleted post title on main page load
+const deletedTitle = localStorage.getItem('deletedTitle');
+if (deletedTitle) {
+    handleAlerts('danger', `Post '${deletedTitle}' was deleted.`);
+    localStorage.removeItem('deletedTitle'); // Clear the item after showing alert
+}
+
 // --- Main Function Definitions ---
 
 // Function to fetch and display posts
