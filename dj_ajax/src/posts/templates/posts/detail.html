@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ obj.title }} - Detail {# Use post title from context #}
+{% endblock title %}
+
+{% block content %}
+{# Buttons row #}
+<div class="mb-2">
+     <button class="btn btn-info" id="back-btn">Back</button>
+     {# Add not-visible initially - will be shown by JS if user is author #}
+     <button class="btn btn-primary not-visible" id="update-btn">Update</button>
+     <button class="btn btn-danger not-visible" id="delete-btn">Delete</button>
+</div>
+
+{# Spinner - shown initially, hidden by JS when data loads #}
+<div id="spinner-box" class="text-center mt-3 mb-3">
+    <div class="spinner-border" role="status"></div>
+</div>
+
+{# Container where post details will be injected by JS #}
+<div id="post-box"></div>
+{% endblock content %}
+
+{% block scripts %}
+    {{ block.super }} {# Include base scripts if needed #}
+    <script src="{% static 'posts/detail.js' %}" defer></script>
+{% endblock scripts %}

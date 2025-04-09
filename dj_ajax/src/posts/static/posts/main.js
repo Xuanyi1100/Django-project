@@ -86,7 +86,8 @@ const getData = () => {
                                     <small class="text-muted">Author: ${el.author} | Created: ${el.created}</small>
                                 </div>
                                 <div class="col-auto">
-                                    <a href="#" class="btn btn-primary btn-sm">Details</a>
+                                    
+                                    <a href="/${el.id}/" class="btn btn-primary btn-sm">Details</a> 
                                 </div>
                                 <div class="col-auto">
                                     <form class="like-unlike-forms" data-form-id="${el.id}">

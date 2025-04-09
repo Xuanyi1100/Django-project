@@ -6,6 +6,29 @@ from django.shortcuts import get_object_or_404
 from .forms import PostForm # Import the form
 from profiles.models import Profile # Import Profile to find the author
 
+def post_detail_data_view(request, pk):
+    """Returns details of a single post as JSON"""
+    obj = get_object_or_404(Post, pk=pk)
+    data = {
+        'id': obj.id,
+        'title': obj.title,
+        'body': obj.body,
+        'author': obj.author.user.username,
+        'logged_in': request.user.username, # Send username of logged-in user
+        # Add other fields if needed later (like likes, created)
+    }
+    return JsonResponse({'data': data}) # Wrap dictionary in 'data' key for consistency
+
+# View to render the HTML shell of the detail page
+def post_detail(request, pk):
+    obj = get_object_or_404(Post, pk=pk) # Get the specific post or 404
+    form = PostForm() # Empty form instance initially (for update modal later)
+
+    context = {
+        'obj': obj,   # Pass post object (e.g., for title tag)
+        'form': form, # Pass form instance
+    }
+    return render(request, 'posts/detail.html', context)
 
 def post_list_and_create(request):
     form = PostForm() # For initial GET request context
