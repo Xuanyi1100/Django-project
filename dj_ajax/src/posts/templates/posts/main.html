@@ -1,0 +1,61 @@
+{% extends 'base.html' %} {# Inherit global structure, CSS, JS from base.html #}
+{% load static %} {# Load static tag library #}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Posts - Django Rendered {# Set the page title #}
+{% endblock title %}
+
+
+    {% block content %}
+    <div id="alert-box"></div>
+    <h1>All Posts (Loaded via Ajax)</h1>
+    <button type="button" class="btn btn-info mb-2" data-bs-toggle="modal" data-bs-target="#addPostModal">
+        + Add Post
+    </button>
+    <div class="modal fade" id="addPostModal" tabindex="-1" aria-labelledby="addPostModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            {# --- FORM STARTS HERE --- #}
+            <form id="post-form" method="POST"> {# Use POST method #}
+              {% csrf_token %} {# !!! IMPORTANT for security !!! #}
+              <div class="modal-header">
+                <h5 class="modal-title" id="addPostModalLabel">Create Post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                {# Render the form fields using the crispy filter for Bootstrap styling #}
+                {{ form|crispy }}
+                {# If NOT using crispy, use {{ form.as_p }} or render fields manually #}
+              </div>
+              <div class="modal-footer"> {# Move footer INSIDE the form #}
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                {# Change button type to 'submit' to trigger form submission #}
+                <button type="submit" class="btn btn-success"> + Add</button>
+              </div>
+            </form> {# --- FORM ENDS HERE --- #}
+          </div>
+        </div>
+      </div>
+    <div id="posts-box">
+        </div>
+
+        {# Spinner - hidden initially with 'not-visible' class #}
+        <div id="spinner-box" class="text-center mt-3 mb-3 not-visible">
+            <div class="spinner-border" role="status"></div>
+        </div>
+       
+        {# Container for Load More button OR end message #}
+        <div id="end-box" class="text-center mb-3">
+            <button class="btn btn-primary" id="load-btn">Load more</button>
+        </div>
+    {% endblock content %}
+
+
+
+{% block scripts %}
+{{ block.super }} {# Good practice: include scripts from parent block if any #}
+<script src="{% static 'posts/main.js' %}" defer></script>
+
+{% endblock scripts %}
+
