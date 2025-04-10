@@ -50,6 +50,42 @@
         {# Post title (h3#title-display) and body (p#body-display) are injected here by detail.js #}
     </div>
 
+    <div id="post-box">
+      {# Post title/body loaded by JS here #}
+  </div>
+  <hr> {# Separator before comments #}
+
+  {# --- NEW: Comment Form Section --- #}
+  <div class="card card-body mt-3 mb-3 shadow-sm"> {# Add some card styling #}
+      <h5>Add Comment</h5>
+      {# Use a distinct ID for the comment form #}
+      <form id="comment-form" method="POST">
+          {% csrf_token %}
+          {# Render the comment form using crispy (prefix handled automatically) #}
+          {{ comment_form|crispy }}
+          <button type="submit" id="comment-submit-btn" class="btn btn-primary btn-sm mt-2">Post Comment</button>
+      </form>
+  </div>
+  {# --- End Comment Form Section --- #}
+
+  {# --- NEW: Comments List Section --- #}
+  <div id="comments-box" class="mt-3">
+       <h5>Comments <span class="badge bg-secondary">{{ comments.count }}</span></h5> {# Display comment count #}
+       <hr>
+       {% for c in comments %} {# Loop through comments passed from view #}
+           <div class="card card-body shadow-sm mb-2">
+               <p class="mb-1"> {# Reduce bottom margin #}
+                   <strong>{{ c.user.username }}</strong>
+                   <small class="text-muted"> on {{ c.created|date:"M d, Y, P" }}</small> {# Formatted date #}
+               </p>
+               <p class="mb-0">{{ c.body|linebreaksbr }}</p> {# Display comment body, handle line breaks #}
+           </div>
+       {% empty %} {# If no comments exist #}
+           <p>No comments yet...</p>
+       {% endfor %}
+  </div>
+  {# --- End Comments List Section --- #}
+
     {# --- Modals (defined once, usually towards the end) --- #}
 
     {# --- Update Post Modal --- #}

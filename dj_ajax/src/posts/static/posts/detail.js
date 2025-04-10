@@ -37,6 +37,13 @@ const updateUrl = currentUrl + "update/";
 const deleteUrl = currentUrl + "delete/";
 const dataUrl = currentUrl + "data/"; // URL to fetch post JSON data
 
+const commentForm = document.getElementById('comment-form');
+// Use the correct ID including the prefix ('comment') Django generates
+const commentBodyInput = document.getElementById('id_comment-body');
+const commentsBox = document.getElementById('comments-box');
+// Get post PK from the current page's URL (e.g., /19/ -> 19)
+const postPk = window.location.pathname.split('/')[1];
+
 // --- Helper Functions ---
 const handleAlerts = (type, msg) => {
     if (alertBox) {
@@ -169,3 +176,76 @@ if (deleteForm) {
         }); // End $.ajax
     }); // End submit listener
 } // End if deleteForm
+
+// Listener for the Add Comment form submission
+if (commentForm) {
+    commentForm.addEventListener('submit', e => {
+        e.preventDefault(); // Prevent default page reload
+
+        // Construct the specific URL for adding a comment to this post
+        const commentUrl = `/${postPk}/comment/`; // Uses postPk obtained from window.location
+
+        $.ajax({
+            type: 'POST',
+            url: commentUrl,
+            data: {
+                'csrfmiddlewaretoken': csrftoken,
+                'comment-body': commentBodyInput.value, // Adjust according to the input name
+            },
+            success: function(response) {
+                console.log('Comment add success:', response);
+
+                // Remove "No comments yet..." message if it exists
+                const noCommentsEl = commentsBox.querySelector('p');
+                if (noCommentsEl && noCommentsEl.textContent === 'No comments yet...') {
+                    noCommentsEl.remove();
+                }
+
+                // Also remove initial hr if needed, or add one before first comment
+                const firstHr = commentsBox.querySelector('hr');
+                if (commentsBox.querySelectorAll('.card').length === 0 && firstHr) {
+                    commentsBox.insertAdjacentHTML('afterbegin', '<hr>');
+                }
+
+                // Construct HTML for the new comment using response data
+                const newCommentHtml = `
+                    <div class="card card-body shadow-sm mb-2">
+                        <p class="mb-1">
+                            <strong>${response.user}</strong>
+                            <small class="text-muted"> just now</small>
+                        </p>
+                        <p class="mb-0">${response.body.replace(/\n/g, "<br>")}</p>
+                    </div>
+                `;
+
+                // Prepend to comments box
+                const targetElement = commentsBox.querySelector('hr') || commentsBox;
+                targetElement.insertAdjacentHTML('afterend', newCommentHtml);
+
+                // Reset the comment form
+                commentForm.reset();
+
+                // Show success alert
+                handleAlerts('success', 'Comment added!');
+
+                // Update comment count badge
+                const countBadge = document.querySelector('#comments-box h5 .badge');
+                if (countBadge) {
+                    countBadge.textContent = parseInt(countBadge.textContent) + 1;
+                }
+            },
+            error: function(error) {
+                console.log('Comment add error:', error);
+                let errorMsg = 'Failed to add comment.';
+                if (error.responseJSON && error.responseJSON.error === 'Comment invalid' && error.responseJSON.errors) {
+                    console.log("Validation Errors:", error.responseJSON.errors);
+                    try {
+                        const errors = JSON.parse(error.responseJSON.errors);
+                        errorMsg = errors.body[0].message || 'Invalid input.';
+                    } catch (e) {}
+                }
+                handleAlerts('danger', errorMsg);
+            }
+        });
+    });
+}

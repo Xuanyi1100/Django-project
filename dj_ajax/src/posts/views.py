@@ -2,7 +2,8 @@
 from django.shortcuts import render, redirect, get_object_or_404 # Added redirect
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required # Added login_required
-from .models import Post, Photo
+from .models import Post, Photo, Comment
+from .forms import PostForm, CommentForm
 from .forms import PostForm
 from profiles.models import Profile
 from .utils import action_permission # Import custom decorator
@@ -45,9 +46,14 @@ def post_list_and_create(request):
 def post_detail(request, pk):
     obj = get_object_or_404(Post, pk=pk)
     form = PostForm() # Empty form for update modal display
+    comment_form = CommentForm(prefix='comment') # Instantiate EMPTY comment form WITH a prefix
+    comments = Comment.objects.filter(post=obj) # Get all comments for this post, ordered by Meta
+
     context = {
         'obj': obj,
         'form': form,
+         'comment_form': comment_form, # The CommentForm for adding new comments
+        'comments': comments,       # The QuerySet of existing comments
     }
     return render(request, 'posts/detail.html', context)
 
@@ -162,3 +168,38 @@ def image_upload_view(request):
             return HttpResponse('Missing file or post ID.', status=400)
     else:
         return redirect('posts:main-post-list') # Redirect if not POST
+    
+@login_required # Only logged-in users can comment
+def add_comment(request, pk): # pk is the ID of the Post being commented on
+    if request.method == 'POST':
+        # Instantiate form with POST data AND the prefix used when rendering
+        comment_form_data = CommentForm(request.POST, prefix='comment')
+        if comment_form_data.is_valid():
+            try:
+                post_obj = Post.objects.get(pk=pk) # Get the post instance
+                # Create comment instance but don't save yet
+                instance = comment_form_data.save(commit=False)
+                # Assign the logged-in user and the target post
+                instance.user = request.user
+                instance.post = post_obj
+                instance.save() # Save the comment to the database
+
+                # Return data for the newly created comment
+                return JsonResponse({
+                    'id': instance.id,
+                    'user': instance.user.username,
+                    'body': instance.body,
+                    # Use a simpler format, or 'just now' on frontend
+                    'created': instance.created.strftime('%b %d, %Y, %I:%M %p'),
+                }, status=201) # 201 Created status
+            except Post.DoesNotExist:
+                return JsonResponse({'error': 'Post not found'}, status=404)
+            except Exception as e:
+                print(f"Error saving comment: {e}") # Log error
+                return JsonResponse({'error': 'Error saving comment'}, status=500)
+        else: # Form validation failed
+             print(f"Comment form errors: {comment_form_data.errors}")
+             # Return validation errors to potentially display them
+             return JsonResponse({'error': 'Comment invalid', 'errors': comment_form_data.errors.as_json()}, status=400)
+    else: # Method not POST
+        return JsonResponse({'error': 'Invalid request method'}, status=405) # Method Not Allowed

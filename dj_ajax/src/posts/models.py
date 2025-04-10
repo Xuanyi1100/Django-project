@@ -46,3 +46,17 @@ class Photo(models.Model):
     
     class Meta:
         ordering = ('-created',)
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments') # Link to Post
+    user = models.ForeignKey(User, on_delete=models.CASCADE) # Link to User who commented
+    body = models.TextField(max_length=300) # The actual comment text
+    created = models.DateTimeField(auto_now_add=True) # Timestamp
+
+    def __str__(self):
+        # Example: "User 'root' commented on 'My First Post'"
+        return f"User '{self.user.username}' commented on '{self.post.title}'"
+
+    class Meta:
+        ordering = ('-created',) # Show newest comments first

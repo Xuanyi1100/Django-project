@@ -1,6 +1,6 @@
 from django.urls import path
 # Import the view function we just created
-from .views import post_list_and_create, load_posts_data_view,like_unlike_post,post_detail,post_detail_data_view,update_post, delete_post,image_upload_view 
+from .views import post_list_and_create, load_posts_data_view,like_unlike_post,post_detail,post_detail_data_view,update_post, delete_post,image_upload_view , add_comment
 
 
 
@@ -24,4 +24,5 @@ urlpatterns = [
     # Add URL for deleting a specific post
     path('<int:pk>/delete/', delete_post, name='post-delete'),
     path('upload/', image_upload_view, name='image-upload'), # URL for handling uploads
+    path('<int:pk>/comment/', add_comment, name='add-comment'),
 ]
