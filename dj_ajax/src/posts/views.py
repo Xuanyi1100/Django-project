@@ -1,10 +1,34 @@
 from django.shortcuts import render
 
-from .models import Post # Import your Post model
-from django.http import JsonResponse
+from .models import Post, Photo # Import your Post model
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 from .forms import PostForm # Import the form
 from profiles.models import Profile # Import Profile to find the author
+
+def image_upload_view(request):
+    # print(request.FILES) # Useful for debugging uploaded files
+    if request.method == 'POST':
+        # Dropzone sends file under 'file' key by default
+        uploaded_image = request.FILES.get('file')
+        # We send the new post's ID in the form data
+        post_pk = request.POST.get('new_post_id')
+
+        if uploaded_image and post_pk:
+            try:
+                post_obj = Post.objects.get(pk=post_pk)
+                Photo.objects.create(post=post_obj, image=uploaded_image)
+                # Return simple success response for Dropzone
+                return HttpResponse() # Empty success status 200 is often enough
+            except Post.DoesNotExist:
+                return HttpResponse('Associated post not found.', status=404)
+            except Exception as e:
+                 print(f"Error saving photo: {e}")
+                 return HttpResponse(f'Error saving file: {e}', status=500)
+        else:
+            return HttpResponse('Missing file or post ID.', status=400)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405) # Method Not Allowed
 
 def update_post(request, pk):
     obj = get_object_or_404(Post, pk=pk)

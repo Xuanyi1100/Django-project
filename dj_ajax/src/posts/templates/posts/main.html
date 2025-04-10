@@ -27,6 +27,14 @@
                 {# Render the form fields using the crispy filter for Bootstrap styling #}
                 {{ form|crispy }}
                 {# If NOT using crispy, use {{ form.as_p }} or render fields manually #}
+
+       
+        
+                <div class="dropzone dz" id="my-dropzone">
+                    {# Dropzone.js will add content here, e.g., "Drop files..." #}
+                    {# No action, method, or csrf token needed here now #}
+                </div>
+        {# --- END DROPZONE FORM --- #}
               </div>
               <div class="modal-footer"> {# Move footer INSIDE the form #}
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>

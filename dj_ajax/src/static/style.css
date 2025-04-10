@@ -1,3 +1,17 @@
 .not-visible {
     display: none;
 }
+
+.dz {
+    border: dashed 2px gray !important; /* Use 2px for visibility */
+    border-radius: 10px !important;
+ }
+ 
+ .dz:hover {
+    background-color: aliceblue !important;
+ }
+ 
+ .not-visible {
+     display: none;
+ }
+
