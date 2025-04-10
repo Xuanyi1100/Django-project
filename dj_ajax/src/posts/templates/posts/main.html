@@ -17,7 +17,7 @@
         <div class="modal-dialog">
           <div class="modal-content">
             {# --- FORM STARTS HERE --- #}
-            <form id="post-form" method="POST"> {# Use POST method #}
+            <form id="post-form" method="POST" autocomplete="off"> {# Use POST method #}
               {% csrf_token %} {# !!! IMPORTANT for security !!! #}
               <div class="modal-header">
                 <h5 class="modal-title" id="addPostModalLabel">Create Post</h5>

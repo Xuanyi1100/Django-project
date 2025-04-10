@@ -141,3 +141,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Crispy Forms Settings
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# src/posts_proj/settings.py (near bottom)
+LOGIN_URL = '/admin/login/' # Or just '/admin/' as Django redirects within admin

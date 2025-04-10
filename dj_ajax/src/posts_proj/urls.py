@@ -25,6 +25,7 @@ urlpatterns = [
     # Include posts.urls at the root ('') of the site
     # Use namespace='posts' matching app_name in posts/urls.py
     path('', include('posts.urls', namespace='posts')),
+    path('profiles/', include('profiles.urls', namespace='profiles')),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) # Following transcript; serves /static/ URL
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # Serves /media/ URL
