@@ -20,7 +20,7 @@ const csrftoken = getCookie('csrftoken');
 // --- DOM Element References ---
 const postBox = document.getElementById('post-box');
 const spinnerBox = document.getElementById('spinner-box');
-const backBtn = document.getElementById('back-btn');
+//const backBtn = document.getElementById('back-btn');
 const updateBtn = document.getElementById('update-btn');
 const deleteBtn = document.getElementById('delete-btn');
 const alertBox = document.getElementById('alert-box'); // Assumes alert-box exists in base.html or detail.html content block top level
@@ -111,12 +111,12 @@ $.ajax({
 
 // --- Event Listeners ---
 
-// Back Button
+/*
 if (backBtn) {
     backBtn.addEventListener('click', () => {
         history.back();
     });
-}
+}*/
 
 // Update Form Submission
 if (updateForm) {

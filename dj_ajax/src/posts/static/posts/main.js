@@ -215,12 +215,14 @@ if (postForm) { // Check if form exists
                 likeUnlikePosts(); // Re-attach listener to the NEW like button
 
                 handleAlerts('success', 'New post added! Add photos below.');
+                
 
-                // Show the dropzone
+
+                 //Show the dropzone
                 if (dropzoneForm) {
                     dropzoneForm.classList.remove('not-visible');
                 }
-                 // NOTE: Modal is NOT hidden here, Form is NOT reset here
+                 
             },
             error: function(error) {
                 console.log('Form Submit Error:', error);

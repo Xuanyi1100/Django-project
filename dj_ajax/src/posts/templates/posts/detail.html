@@ -9,8 +9,7 @@
 {% block content %}
     {# --- Action Buttons Row --- #}
     <div class="mb-3"> {# Added slightly more margin-bottom #}
-         <button class="btn btn-info" id="back-btn">Back</button>
-         {# Update/Delete start hidden; JS will show them if the logged-in user is the author #}
+         <a href="{% url 'posts:main-post-list' %}" class="btn btn-info">Back</a>
          <button class="btn btn-primary not-visible" id="update-btn" data-bs-toggle="modal" data-bs-target="#updateModal">Update</button>
          <button class="btn btn-danger not-visible" id="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
     </div>
